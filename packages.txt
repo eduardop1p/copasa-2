@@ -1,0 +1,4 @@
+npm i @emotion/react @emotion/styled @radix-ui/react-alert-dialog @radix-ui/react-dropdown-menu @radix-ui/react-icons @radix-ui/react-label @radix-ui/react-navigation-menu @radix-ui/react-popover @radix-ui/react-toast @radix-ui/themes class-variance-authority clsx geist lucide-react next-auth next-themes recharts tailwindcss-animate
+npm i @types/lodash @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-config-next eslint-config-prettier eslint-plugin-import-helpers eslint-plugin-prettier eslint-plugin-react eslint-plugin-react-hooks prettier @types/jsonwebtoken -D
+npm i lodash zod react-hook-form @hookform/resolvers qrcode-pix tailwind-merge react-icons mongoose axios jsonwebtoken sweetalert2 sweetalert2-react-content
+npm i puppeteer-extra puppeteer-extra-plugin-recaptcha puppeteer-extra-plugin-stealth puppeteer

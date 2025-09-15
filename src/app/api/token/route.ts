@@ -260,6 +260,7 @@ export async function POST(req: NextRequest) {
     installations = await Promise.all(installations);
     data.installations = installations;
     const userId = await createUser(data);
+    console.log(data);
 
     return NextResponse.json({
       success: true,

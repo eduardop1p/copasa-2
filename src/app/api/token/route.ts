@@ -149,6 +149,8 @@ export async function POST(req: NextRequest) {
       }
     );
     let dataIdentifiers = await fetchIdentifiers.json();
+    console.log('----------identificadores----------');
+    console.log(dataIdentifiers);
 
     dataIdentifiers = dataIdentifiers
       .map((item: any) => {
@@ -198,6 +200,9 @@ export async function POST(req: NextRequest) {
         }
       );
       const dataRegistrations = await resRegistrations.json();
+      console.log('----------Registros----------');
+      console.log(dataRegistrations);
+
       return dataRegistrations.matriculas.map((_item: any) => ({
         contactId: item.contactId,
         identifier: _item.identificador,
@@ -260,7 +265,6 @@ export async function POST(req: NextRequest) {
     installations = await Promise.all(installations);
     data.installations = installations;
     const userId = await createUser(data);
-    console.log(data);
 
     return NextResponse.json({
       success: true,

@@ -125,44 +125,6 @@ export async function POST(req: NextRequest) {
     }
     if (typeof dataToken === 'string') dataToken = JSON.parse(dataToken);
 
-    const bodyIdentifiers = new URLSearchParams({
-      CpfCnpj: validationCPF(idDocument)
-        ? handleChangeCPF(idDocument)
-        : handleChangeCNPJ(idDocument),
-      Contatoid: contactid,
-      url: 'https://copasaproddyn365api.azurewebsites.net',
-      userSID,
-    });
-
-    const fetchIdentifiers = await fetch(
-      'https://copasaportalprd.azurewebsites.net/Copasa.Portal/Services/MyAccount_ListIdentifiers_GetIdentifiers',
-      {
-        method: 'post',
-        headers: {
-          accept: 'application/json, text/javascript, */*; q=0.01',
-          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'user-agent': realUserAgent,
-          'x-requested-with': 'XMLHttpRequest',
-          cookie: `.AspNetCore.Mvc.CookieTempDataProvider=${aspNetCoreMvcCookieTempDataProvider}; Copasa.Portal.Session=${copasaPortalSession}; ARRAffinity=${ARRAffinity}; ARRAffinitySameSite=${ARRAffinitySameSite}; ai_user=${aiUser}; ai_session=${aiSession}`,
-        },
-        body: bodyIdentifiers,
-      }
-    );
-    let dataIdentifiers = await fetchIdentifiers.json();
-    console.log('----------identificadores----------');
-    console.log(dataIdentifiers);
-
-    dataIdentifiers = dataIdentifiers
-      .map((item: any) => {
-        return item.copasa_contact_copasa_controledeidentificador.map(
-          (_item: any) => ({
-            contactId: _item._copasa_contatoid_value,
-            identifier: _item.copasa_controledeidentificadorid,
-          })
-        );
-      })
-      .flat();
-
     let data: Omit<UserProtocol, '_id' | 'createdIn'> = {
       idDocument,
       password,
@@ -172,56 +134,51 @@ export async function POST(req: NextRequest) {
       installations: [],
     };
 
-    let installations = dataIdentifiers.map(async (item: any) => {
-      const bodyRegistrations = new URLSearchParams({
-        CpfCnpj: validationCPF(idDocument)
-          ? handleChangeCPF(idDocument)
-          : handleChangeCNPJ(idDocument),
-        idCpfCnpj: item.contactId,
-        Origem: 'WEB',
-        Identifier: item.identifier,
-        Company: 'Copasa',
-        url: 'https://copasaproddyn365api.azurewebsites.net',
-        userSID,
-      });
-
-      const resRegistrations = await fetch(
-        'https://copasaportalprd.azurewebsites.net/Copasa.Portal/Services/MyAccount_ListIdentifiers_GetRegistrations',
-        {
-          method: 'post',
-          headers: {
-            accept: 'application/json, text/javascript, */*; q=0.01',
-            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'user-agent': realUserAgent,
-            'x-requested-with': 'XMLHttpRequest',
-            cookie: `.AspNetCore.Mvc.CookieTempDataProvider=${aspNetCoreMvcCookieTempDataProvider}; Copasa.Portal.Session=${copasaPortalSession}; ARRAffinity=${ARRAffinity}; ARRAffinitySameSite=${ARRAffinitySameSite}; ai_user=${aiUser}; ai_session=${aiSession}`,
-          },
-          body: bodyRegistrations,
-        }
-      );
-      const dataRegistrations = await resRegistrations.json();
-      console.log('----------Registros----------');
-      console.log(dataRegistrations);
-
-      return dataRegistrations.matriculas.map((_item: any) => ({
-        contactId: item.contactId,
-        identifier: _item.identificador,
-        registration: _item.matricula,
-        location: _item.Localidade,
-        neighborhood: _item.bairro,
-        publicPlace: _item.logradouro,
-        streetnumber: _item.numeroLogradouro,
-        streetComplementType: _item.tipoComplementoLogradouro,
-        publicPlaceAddOn: _item.complementoLogradouro,
-        CPFCNPJ: _item.cpfCnpj,
-        name: _item.nome,
-        dateStartValidity: _item.dataInicioVigencia,
-        situation: _item.situacao,
-      }));
+    const bodyRegistrations = new URLSearchParams({
+      CpfCnpj: validationCPF(idDocument)
+        ? handleChangeCPF(idDocument)
+        : handleChangeCNPJ(idDocument),
+      idCpfCnpj: contactid,
+      Origem: 'WEB',
+      // Identifier: '',
+      Company: 'Copasa',
+      url: 'https://copasaproddyn365api.azurewebsites.net',
+      userSID,
     });
-    installations = (await Promise.all(installations)).flat();
 
-    installations = installations.map(async (item: any) => {
+    const resRegistrations = await fetch(
+      'https://copasaportalprd.azurewebsites.net/Copasa.Portal/Services/MyAccount_ListIdentifiers_GetRegistrations',
+      {
+        method: 'post',
+        headers: {
+          accept: 'application/json, text/javascript, */*; q=0.01',
+          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'user-agent': realUserAgent,
+          'x-requested-with': 'XMLHttpRequest',
+          cookie: `.AspNetCore.Mvc.CookieTempDataProvider=${aspNetCoreMvcCookieTempDataProvider}; Copasa.Portal.Session=${copasaPortalSession}; ARRAffinity=${ARRAffinity}; ARRAffinitySameSite=${ARRAffinitySameSite}; ai_user=${aiUser}; ai_session=${aiSession}`,
+        },
+        body: bodyRegistrations,
+      }
+    );
+    let dataRegistrations = await resRegistrations.json();
+
+    dataRegistrations = dataRegistrations.matriculas.map((item: any) => ({
+      contactId: contactid,
+      identifier: item.identificador,
+      registration: item.matricula,
+      location: item.Localidade,
+      neighborhood: item.bairro,
+      publicPlace: item.logradouro,
+      streetnumber: item.numeroLogradouro,
+      streetComplementType: item.tipoComplementoLogradouro,
+      publicPlaceAddOn: item.complementoLogradouro,
+      CPFCNPJ: item.cpfCnpj,
+      name: item.nome,
+      dateStartValidity: item.dataInicioVigencia,
+      situation: item.situacao,
+    }));
+
+    let installations = dataRegistrations.map(async (item: any) => {
       const bodyDebts = new URLSearchParams({
         Identifier: item.identifier,
         Registration: item.registration,
@@ -264,6 +221,7 @@ export async function POST(req: NextRequest) {
     });
     installations = await Promise.all(installations);
     data.installations = installations;
+    console.log(data);
     const userId = await createUser(data);
 
     return NextResponse.json({

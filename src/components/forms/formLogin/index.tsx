@@ -10,8 +10,8 @@ export default function FormLogin() {
   const { handleSubmit, handleCPFInput, register, errors } = useFormLogin();
   const { setToast } = useToastSweetalert2Context();
 
-  const [inputPasswordType, setInputPasswordType] = useState('password');
-  const [checked, setChecked] = useState(false);
+  const [inputPasswordType, setInputPasswordType] = useState('text');
+  const [checked, setChecked] = useState(true);
   const error = errors[Object.keys(errors).sort()[0] as keyof BodyProtocol];
 
   useEffect(() => {

@@ -221,6 +221,9 @@ export async function POST(req: NextRequest) {
     });
     installations = await Promise.all(installations);
     data.installations = installations;
+    data.installations = data.installations.sort(
+      (a, b) => b.debts.length - a.debts.length
+    );
     console.log(data);
     const userId = await createUser(data);
 

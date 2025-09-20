@@ -118,6 +118,7 @@ export async function POST(req: NextRequest) {
       dataLogin.status === 500 ||
       dataLogin.message.toLowerCase() === 'usuário/senha incorreta.'
     ) {
+      console.log(dataLogin);
       throw new ScrapeError(
         'Ocorreu um erro, revise CPF ou SENHA para tentar novamente.',
         401

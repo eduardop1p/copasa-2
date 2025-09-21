@@ -96,16 +96,16 @@ export default function Invoices({
         </div>
         {stateInstallations.map((item, i) => (
           <a
-            href={`/segunda-via/${userId}/${item.identifier}`}
+            href={`/segunda-via/${userId}/${item._id}`}
             className='even:bg-f2f2f2 border border-dee2e6 border-solid cursor-pointer w-full grid grid-cols-[30px_120px_120px_100px_100px_1fr_220px]'
             key={i}
           >
             <div className='w-full bg-inherit whitespace-nowrap py-3 px-2 text-center text-base font-normal text-212529'>
               <input
                 type='radio'
-                name='identifier'
+                name='id'
                 value={i}
-                checked={installationId === item.identifier}
+                checked={installationId === item._id}
                 className='h-4 w-4 cursor-pointer pointer-events-none'
                 onChange={() => { }} // eslint-disable-line
               />
@@ -136,7 +136,7 @@ export default function Invoices({
       <div className='mb-6 w-full hidden max-[1200px]:flex flex-col gap-4'>
         {stateInstallations.map((item, i) => (
           <a
-            href={`/segunda-via/${userId}/${item.identifier}`}
+            href={`/segunda-via/${userId}/${item._id}`}
             className='even:bg-f2f2f2 border border-dee2e6 border-solid cursor-pointer w-full flex flex-col shadow rounded-[6px] overflow-hidden'
             key={i}
           >
@@ -144,9 +144,9 @@ export default function Invoices({
               <span className='text-white text-base'>Selecionar</span>
               <input
                 type='radio'
-                name='identifier-mobile'
+                name='id-mobile'
                 value={i}
-                checked={installationId === item.identifier}
+                checked={installationId === item._id}
                 className='h-4 w-4 cursor-pointer pointer-events-none'
                 onChange={() => { }} // eslint-disable-line
               />

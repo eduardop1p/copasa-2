@@ -2,7 +2,7 @@ import { FormEvent } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import encryptData from '@/actions/encryptData';
-import setCookie from '@/actions/setCookie';
+// import setCookie from '@/actions/setCookie';
 import ScrapeError from '@/errors/scrapeError';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -43,24 +43,27 @@ export default function useFormLogin() {
       });
       const data = await res.json();
       if (!res.ok) throw new ScrapeError(data.error.message, 400);
-      await setCookie('idDocument', data.idDocument);
-      await setCookie('password', data.password);
-      await setCookie('contactid', data.contactid);
-      await setCookie('userSID', data.userSID);
-      await setCookie(
-        'aspNetCoreMvcCookieTempDataProvider',
-        data.aspNetCoreMvcCookieTempDataProvider
-      );
-      await setCookie('copasaPortalSession', data.copasaPortalSession);
-      await setCookie('ARRAffinity', data.ARRAffinity);
-      await setCookie('ARRAffinitySameSite', data.ARRAffinitySameSite);
-      await setCookie('aiUser', data.aiUser);
-      await setCookie('aiSession', data.aiSession);
+      const userId = data.userId;
+      const installationId = data.installationId;
+      location.href = `/contas/${userId}/${installationId}`;
+      // await setCookie('idDocument', data.idDocument);
+      // await setCookie('password', data.password);
+      // await setCookie('contactid', data.contactid);
+      // await setCookie('userSID', data.userSID);
+      // await setCookie(
+      //   'aspNetCoreMvcCookieTempDataProvider',
+      //   data.aspNetCoreMvcCookieTempDataProvider
+      // );
+      // await setCookie('copasaPortalSession', data.copasaPortalSession);
+      // await setCookie('ARRAffinity', data.ARRAffinity);
+      // await setCookie('ARRAffinitySameSite', data.ARRAffinitySameSite);
+      // await setCookie('aiUser', data.aiUser);
+      // await setCookie('aiSession', data.aiSession);
 
-      setTimeout(() => {
-        setIsLoading(false);
-        location.href = `/token`;
-      }, 1000);
+      // setTimeout(() => {
+      //   setIsLoading(false);
+      //   location.href = `/token`;
+      // }, 1000);
     } catch (err) {
       setIsLoading(false);
       if (err instanceof ScrapeError) {

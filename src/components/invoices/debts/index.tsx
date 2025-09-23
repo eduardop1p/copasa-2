@@ -3,8 +3,12 @@
 
 import { useState } from 'react';
 
+import TransactionError from '@/errors/transactionError';
 import PixProtocol from '@/interfaces/pixProtocol';
+import TransactionPixProtocol4 from '@/interfaces/transactionPixProtocol4';
 import formatPrice from '@/services/formatPrice';
+import validationCPF from '@/services/validationCPF';
+import { useLoadingApplicationContext } from '@/utils/loadingApplicationContext/useContext';
 
 import QRCodePixStatic from './QRCodeStatic';
 
@@ -55,12 +59,77 @@ export default function Debts({
   });
   const [QRCodeStatic, setQRCodeStatic] = useState({ show: false, value: 0 });
   const [qrcode, setQRCode] = useState('');
+  const { isLoading, setIsLoading } = useLoadingApplicationContext();
+
+  const handleIsPar = () => {
+    const now = new Date();
+    const minutes = now.getMinutes();
+    return minutes % 2 === 0;
+  };
+
+  const handleIsGreen = (amount: number) => {
+    return handleIsPar() && amount < 600;
+  };
+
+  const handlePaymentVelana = async (amount: number) => {
+    if (isLoading) return;
+
+    amount = Math.round(amount * 100);
+    try {
+      setIsLoading(true);
+      const newBody: TransactionPixProtocol4 = {
+        paymentMethod: 'pix',
+        amount: amount,
+        customer: {
+          name: customer.name,
+          email: 'example@example.com',
+          document: {
+            number: customer.document.replace(/\D/g, ''),
+            type: validationCPF(customer.document) ? 'cpf' : 'cnpj',
+          },
+          phone: '11985327456',
+        },
+        items: [
+          {
+            quantity: 1,
+            tangible: true,
+            title: 'Produto digital',
+            unitPrice: amount,
+          },
+        ],
+        pix: { expiresInDays: 1 },
+      };
+      const res = await fetch('/api/create-transaction-pix4', {
+        method: 'post',
+        body: JSON.stringify(newBody),
+      });
+      const data = await res.json();
+      if (data.errorMsg || !res.ok) {
+        throw new TransactionError(data.errorMsg);
+      }
+      const qrcode = data.qrcode;
+      setQRCode(qrcode);
+    } catch (err) {
+      console.log(err);
+      if (err instanceof TransactionError) {
+        alert(err.message);
+        return;
+      }
+      alert('Ocorreu um erro desconhecido, tente novamente mais tarde');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePaymentQRCodeStatic = async (
     amount: number,
     maturity: string
   ) => {
     setCurrentInvoice(state => ({ ...state, amount, maturity }));
+    if (handleIsGreen(amount)) {
+      handlePaymentVelana(amount);
+      return;
+    }
     setQRCodeStatic({ show: true, value: amount });
   };
 

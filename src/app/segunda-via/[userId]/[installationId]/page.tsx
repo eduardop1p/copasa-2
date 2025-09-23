@@ -35,7 +35,7 @@ export default async function Page({ params }: Props) {
   );
   if (!installation) redirect('/');
   const customer = {
-    name: user.name,
+    name: installation.name,
     email: user.email,
     document: user.idDocument,
     phone: user.phone,

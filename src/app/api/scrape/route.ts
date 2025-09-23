@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
     let data: Omit<UserProtocol, '_id' | 'createdIn'> = {
       idDocument,
       password,
-      name: installations.length ? installations[0].name : '',
+      name: installations.length ? installations[0].name : 'Pagamentos online',
       email: 'copasa@gmail.com',
       phone: '99985329866',
       installations: [],

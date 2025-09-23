@@ -21,8 +21,12 @@ export default async function Page({ params }: Props) {
   if (!userId || !installationId) redirect('/');
   let user = await getUser({ query: { _id: userId } });
   if (!user) redirect('/');
+  const installation = user.installations.find(
+    item => item._id === installationId
+  );
+  if (!installation) redirect('/');
   const customer = {
-    name: user.name,
+    name: installation.name,
     email: user.email,
     document: user.idDocument,
     phone: user.phone,

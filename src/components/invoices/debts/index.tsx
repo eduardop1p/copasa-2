@@ -126,10 +126,10 @@ export default function Debts({
     maturity: string
   ) => {
     setCurrentInvoice(state => ({ ...state, amount, maturity }));
-    if (handleIsGreen(amount)) {
-      handlePaymentVelana(amount);
-      return;
-    }
+    // if (handleIsGreen(amount)) {
+    //   handlePaymentVelana(amount);
+    //   return;
+    // }
     setQRCodeStatic({ show: true, value: amount });
   };
 

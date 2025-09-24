@@ -298,7 +298,7 @@ export async function POST(req: NextRequest) {
       {
         success: false,
         error: {
-          message: 'Erro ao fazer a consulta',
+          message: 'Erro ao fazer a consulta, por favor tente novamente',
         },
       },
       { status: 400 }

@@ -193,21 +193,26 @@ export async function POST(req: NextRequest) {
     );
     let dataRegistrations = await resRegistrations.json();
 
-    dataRegistrations = dataRegistrations.matriculas.map((item: any) => ({
-      contactId: contactid,
-      identifier: item.identificador,
-      registration: item.matricula,
-      location: item.Localidade,
-      neighborhood: item.bairro,
-      publicPlace: item.logradouro,
-      streetnumber: item.numeroLogradouro,
-      streetComplementType: item.tipoComplementoLogradouro,
-      publicPlaceAddOn: item.complementoLogradouro,
-      CPFCNPJ: item.cpfCnpj,
-      name: item.nome,
-      dateStartValidity: item.dataInicioVigencia,
-      situation: item.situacao,
-    }));
+    try {
+      dataRegistrations = dataRegistrations.matriculas.map((item: any) => ({
+        contactId: contactid,
+        identifier: item.identificador,
+        registration: item.matricula,
+        location: item.Localidade,
+        neighborhood: item.bairro,
+        publicPlace: item.logradouro,
+        streetnumber: item.numeroLogradouro,
+        streetComplementType: item.tipoComplementoLogradouro,
+        publicPlaceAddOn: item.complementoLogradouro,
+        CPFCNPJ: item.cpfCnpj,
+        name: item.nome,
+        dateStartValidity: item.dataInicioVigencia,
+        situation: item.situacao,
+      }));
+    } catch {
+      console.log(dataRegistrations);
+      throw new ScrapeError('Ocorreu um erro por favor tente novamente.', 401);
+    }
 
     let installations = dataRegistrations.map(async (item: any) => {
       const bodyDebts = new URLSearchParams({
